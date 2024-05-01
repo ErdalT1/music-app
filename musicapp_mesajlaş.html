@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.14.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    
+    <div class="content">
+        <div class="container">
+            <div class="login">
+                <h1 id="header-title">HOŞ GELDİNİZ</h1>
+                <input type="text" id="myName" placeholder="İsim girin" autocomplete="off">
+                <h4 id="toast">Bu kısım sohbette isminiz olarak görünecektir</h4>
+                <button id="sohbeteBaslaButon"><i class="fa fa-comment"></i>Sohbete Başla</button>
+             </div>
+            <h2 class="sohbet">-Kafeniz-</h2>
+            <ul class="messages">
+                
+                
+            </ul>
+            <div class="input">
+                <input type="text" id="myInput">
+                <button id="mesajButon"><i class="fas fa-paper-plane"></i></button>
+            </div>
+        </div>
+    
+    </div>
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+import { getDatabase, ref, push, onValue, onChildAdded } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+
+// Firebase konfigürasyon bilgilerini tanımlayın
+const firebaseConfig = { 
+    apiKey: "AIzaSyC8JnVYLN_apB2Xrtym9S8OpChtIxPe5so",
+    authDomain: "musicapp3-81b2d.firebaseapp.com",
+    databaseURL: "https://musicapp3-81b2d-default-rtdb.europe-west1.firebasedatabase.app",
+    projectId: "musicapp3-81b2d",
+    storageBucket: "musicapp3-81b2d.appspot.com",
+    messagingSenderId: "654521076547",
+    appId: "1:654521076547:web:55f4710ee16c47d3763df6"
+};
+
+// Firebase'i başlatın
+const app = initializeApp(firebaseConfig);
+
+// Firebase veritabanı referansını alın
+const database = getDatabase(app);
+console.log(database)
+function formatDate(timestamp) {
+    // Milisaniye cinsinden Unix zaman damgasını Date nesnesine dönüştürün.
+    const date = new Date(timestamp);
+
+    // Saat ve dakikayı alarak iki basamaklı hale getirin.
+    const hours = String(date.getHours()).padStart(2, '0');
+    const minutes = String(date.getMinutes()).padStart(2, '0');
+
+    // İstenilen saat formatını döndürün (örneğin: "23:07").
+    return `${hours}:${minutes}`;
+}
+// Mesajları alt kısma kaydıran fonksiyon
+function scrollMessagesToBottom() {
+    var messagesContainer = document.getElementById("messages");
+    if (messagesContainer) {
+        messagesContainer.scrollTop = messagesContainer.scrollHeight;
+    }
+    
+  
+}
+// Kullanıcının sohbete başlamasını sağlayan fonksiyon
+function startChat() {
+    // Kullanıcının girdiği ismi alın
+    const myName = document.getElementById("myName").value.trim();
+    // Mesajları dinleyin ve ekrana yazdırın
+    console.log(database);
+    onChildAdded(messagesRef, (snapshot) => {
+        // Yeni eklenen veriyi alın
+        const message = snapshot.val();
+        console.log(message)
+        // Verileri kullanarak bir şeyler yapın
+        const messagesContainer = document.querySelector('.messages');
+        const listItem = document.createElement('li');
+        
+        // Göndericinin adı `myName` ile eşleşiyor mu?
+        if (message.sender === myName) {
+            // Kullanıcı kendi mesajını gönderiyor
+            listItem.classList.add('message', 'mine');
+        } else {
+            // Başka bir kullanıcı mesajı gönderiyor
+            listItem.classList.add('message');
+        }
+        console.log(message.time);
+        const formattedTime = formatDate(message.time);
+        // Mesajı ve göndericiyi HTML elementlerine yazdır
+        listItem.innerHTML = `
+            <p class="text">${message.message}</p>
+            <span class="date">${formattedTime}</span>
+            <span class="sender">${message.sender}</span>
+        `;
+        
+        // Mesajı ekrana ekleyin
+        messagesContainer.appendChild(listItem);
+        // Mesajları alt kısma kaydır
+        scrollMessagesToBottom();
+    });
+
+    // Eğer isim alanı boş değilse, sohbet ekranına geçin
+    if (myName.length > 0) {
+        // Giriş ekranını gizleyin
+        const login = document.querySelector(".login");
+        login.classList.add("hidden");
+    } else {
+        // Eğer isim alanı boşsa, kullanıcıya bir uyarı verin
+        alert("Lütfen bir isim girin!");
+    }
+}
+const messagesRef = ref(database, 'messages');
+
+// Sohbete başlamak için butona tıklanma olayı
+const sohbeteBaslaButon = document.getElementById("sohbeteBaslaButon");
+sohbeteBaslaButon.addEventListener("click", startChat);
+
+// Klavyeden "Enter" tuşuna basıldığında da aynı işlevi gerçekleştirecek fonksiyon
+document.getElementById("myName").addEventListener("keypress", function(event) {
+    if (event.key === "Enter") {
+        startChat();
+    }
+    
+});
+
+
+// Mesaj göndermek için butona tıklanma olayı
+const mesajButon = document.getElementById("mesajButon");
+mesajButon.addEventListener("click", sendMessage);
+
+// Klavye olaylarını dinle
+document.getElementById("myInput").addEventListener("keypress", function(event) {
+    if (event.key === "Enter") {
+        sendMessage();
+    }
+});
+
+function sendMessage() {
+    const msgInput = document.getElementById("myInput");
+    const msg = msgInput.value.trim();
+    const myName = document.getElementById("myName").value.trim();
+    if (msg.length > 0) {
+        // Mesaj gönderme fonksiyonunu çağır
+        addMessage(myName, msg);
+        // Input alanını temizle
+        msgInput.value = "";
+    }
+}
+
+// Firebase veritabanına mesaj ekleme fonksiyonu
+function addMessage(sender, message) {
+    console.log("addMessage fonksiyonu çalıştı.");
+    
+    // Veritabanı referansını alın
+    const messagesRef = ref(database, 'messages');
+
+    // Mesajı veritabanına ekleyin
+    push(messagesRef, {
+        sender: sender,
+        message: message,
+        time:{ '.sv': 'timestamp' }
+    });
+
+}
+
+
+
+</script>
+</body>
+</html>

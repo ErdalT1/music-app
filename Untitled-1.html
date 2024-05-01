@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width
+    , initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.14.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    
+    <div class="container">
+        <div class="login">
+            <span>isim giriniz</span>
+            <input type="text" id="myName" placeholder="isim girin" autocomplete="off">
+            <button onclick="sohbeteBasla();"> <i class="fa fa-comment">sohbete başla</i></button>
+         </div>
+        <h2>sohbet</h2>
+        <ul class="messages">
+            <li class="message">
+                <p class="text">Lorem ipsum dolor sit amet consectetur adipisicing elit. Earum dolore minima eligendi perferendis molestias inventore expedita illum dicta voluptatum, deleniti maxime voluptate nulla distinctio tempore amet recusandae et hic pariatur!</p>
+                <span class="sender">Abone</span>
+                <span class="date">12:00</span>
+            </li>
+            <li class="message mine">
+                <p class="text">Lorem ipsum dolor sit amet consectetur adipisicing elit. Earum dolore minima eligendi perferendis molestias inventore expedita illum dicta voluptatum, deleniti maxime voluptate nulla distinctio tempore amet recusandae et hic pariatur!</p>
+                <span class="date">12:00</span>
+            </li>
+        </ul>
+        <div class="input">
+            <input type="text" id="myInput">
+            <button onclick="mesajGonder();"><i class="fas fa-paper-plane"></i></button>
+        </div>
+    </div>
+    <!-- <script type="module">
+        // Import the functions you need from the SDKs you need
+
+
+        // https://firebase.google.com/docs/web/setup#available-libraries
+      
+        // Your web app's Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyBNv72N20v9nS3THw5-Z_TPemdIKzE7Wsw",
+            authDomain: "new-music-app-84697.firebaseapp.com",
+            databaseURL: "https://new-music-app-84697-default-rtdb.europe-west1.firebasedatabase.app",
+            projectId: "new-music-app-84697",
+            storageBucket: "new-music-app-84697.appspot.com",
+            messagingSenderId: "174658652793",
+            appId: "1:174658652793:web:d4d2f184f218688d0fe2a8"
+        };
+
+      
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const database = getDatabase(app);
+        const messagesRef = ref(database, 'messages');
+      </script> -->
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js"></script>
+<script src="Untitled.js"></script>
+</body>
+</html>
+
+<!-- <script>
+var nameInput = document.getElementById("myName");
+var messages = document.getElementById("messages");
+messages.innerHTML = "";
+var myName = "";
+var login = document.getElementById(".login");
+var ref;
+
+
+
+function init(){
+    var firebaseConfig = {
+            apiKey: "AIzaSyBNv72N20v9nS3THw5-Z_TPemdIKzE7Wsw",
+            authDomain: "new-music-app-84697.firebaseapp.com",
+            databaseURL: "https://new-music-app-84697-default-rtdb.europe-west1.firebasedatabase.app",
+            projectId: "new-music-app-84697",
+            storageBucket: "new-music-app-84697.appspot.com",
+            messagingSenderId: "174658652793",
+            appId: "1:174658652793:web:d4d2f184f218688d0fe2a8"
+      };
+      firebase.initializeApp(firebaseConfig);
+     
+      ref = firebase.database().ref("messages");
+     
+       firebase.database().ref("messages").push().set({
+        sender:"erdal",
+        message:"deneme",
+        time:firebase.database.ServerValue.TIMESTAMP
+      });
+
+
+      firebase.database().ref("messages").on("child_added",(snapshot)=>{
+        var html='';
+        if ( snapshot.val().sender==myName){
+            html += '<li class="message mine">';
+            html += '<p class="text">' + snapshot.val().message + '</p>'; 
+            html += '<span class="date">' + tarihCevir(snapshot.val().time) + '</span>';
+            html += '</li>';
+        }else{
+            html += '<li class="message">';
+            html += '<p class="text">' + snapshot.val().message + '</p>'; 
+            html += '<span class="date">' + tarihCevir(snapshot.val().time) + '</span>';
+            html += '<span class="sender">' + snapshot.val().sender + '</span>';
+            html += '</li>';
+
+        }
+        messages.innerHTML += html;
+        messages.scroll({behavior:"smooth",top:9999999999999999});
+      });
+      
+
+}
+
+
+function sohbeteBasla() {
+    // Kullanıcının girdiği ismi al
+    var myName = document.getElementById("myName").value;
+
+    // Eğer isim alanı boş değilse, sohbet ekranına yönlendir
+    if (myName.length > 0) {
+        // Giriş ekranını gizle
+        var login = document.querySelector(".login");
+        login.classList.add("hidden");
+        init();
+       
+    } else {
+        // Eğer isim alanı boşsa, kullanıcıya bir uyarı verebilirsiniz.
+        alert("Lütfen bir isim girin!");
+    }
+    function tarihCevir(stamp){
+        var dt = new Date(stamp);
+        var s = "0" + dt.getHours();
+        var d = "0" + dt.getMinutes();
+        var format = s.substring(-2) + ":" + d.substring(-2);
+        return format;
+    }
+}
+
+function addMessage(sender, message) {
+    console.log("addMessage fonksiyonu çalıştı.");
+    
+    // Veritabanı referansını alın
+    const messagesRef = ref(database, 'messages');
+
+    // Mesajı veritabanına ekleyin
+    push(messagesRef, {
+        sender: sender,
+        message: message,
+        //time:app.database.ServerValue.TIMESTAMP
+    });
+}
+</script> -->
