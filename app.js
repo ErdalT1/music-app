@@ -6,7 +6,7 @@ messages.innerHTML = "";
 var myName = "";
 var login = document.getElementById(".login");
 var ref;
-
+//merhaba
 const firebaseConfig = {
     apiKey: "AIzaSyD7WyjrI8lIjZin3zfJZ9S8Kq4q8S4nShY",
     authDomain: "musicapp-3a28a.firebaseapp.com",
